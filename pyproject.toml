@@ -7,12 +7,20 @@ requires-python = ">=3.14"
 dependencies = [
     "ffmpeg-python>=0.2.0",
     "gtts>=2.5.4",
+    "lxml>=6.0.2",
     "pdf2image>=1.17.0",
     "python-pptx>=1.0.2",
     "returns>=0.26.0",
 ]
 
-
+[build-system]
+requires = ["uv_build>=0.9.6,<0.10.0"]
+build-backend = "uv_build"
 
 [tool.mypy]
 plugins = ["returns.contrib.mypy.returns_plugin"]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.2",
+]
