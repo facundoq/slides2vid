@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 import faulthandler
+
+from slides2vid.core import make_video
 faulthandler.enable()
 # from pptx import Presentation
 import lxml.etree
@@ -22,7 +24,7 @@ def main():
     with tempfile.TemporaryDirectory() as work_path:
         work_path = Path("output")
         os.makedirs(work_path, exist_ok=True)
-        # make_video(Path(args.pptx), Path(args.pdf), Path(args.output),work_path)
+        make_video(Path(args.pptx), Path(args.pdf), Path(args.output),work_path)
 
 
 if __name__ == '__main__':
