@@ -15,8 +15,10 @@ class ChatterboxTTS(TTSEngine):
         self.device=device
         self.audio_prompt_path=audio_prompt_path
         self.language = language
+        self.model = None
 
     def generate(self, text: str,path:Path,):
-        model = ChatterboxMultilingualTTS.from_pretrained(device=self.device)
-        wav = model.generate(text, language_id=self.language,audio_prompt_path=self.audio_prompt_path)
-        ta.save(path, wav, model.sr)
+        if self.model is None:
+            self.model = ChatterboxMultilingualTTS.from_pretrained(device=self.device)
+        wav = self.model.generate(text, language_id=self.language,audio_prompt_path=self.audio_prompt_path)
+        ta.save(path, wav, self.model.sr)

@@ -1,0 +1,45 @@
+texts:
+  0: "Hello! \nI want to tell you about VonSim, an educational simulator for Assembly. "
+  1: "We created VonSim to teach Assembly at the Universidad Nacional de La Plata,\
+    \  where we have more than a thousand students per year. \nPreviously, we used\
+    \ a very old simulator called MSX88.\nVonSim was born as a web application that\
+    \ provided a backwards compatible version of the instruction set. "
+  2: "VonSim is a web application that features an integrated editor and simulator\
+    \ for a simplified x86 architecture.\n\nStudents can both write and run programs,\
+    \ visualizing the CPU, Buses, Memory and I/O devices as instructions are executed.\n\
+    \nIt also has other cool features, such as an integrated example gallery, mobile\
+    \ layout, and easy sharing of programs with a QR code.  \n\n"
+  3: The IDE features continuous compilation and detailed error messages that allow
+    quick feedback cycles and promote student independence.
+  4: 'The 16-bit architecture features only 4 registers: AX, BX, CX and DX.
+
+
+    These can be addressed as half-registers with alternative names: AH, AL, and so
+    own, where H stands for High and L for Low.
+
+
+    VonSim also includes typical state registers such as the Instruction and Stack
+    Pointers, and a fixed-point Arithmetic Logic Unit '
+  5: "The simplified assembly instruction set is minimalistic and yet it represents\
+    \ key aspects of the x86 architecture.\n\nFor example, VonSim requires specifying\
+    \ the memory layout manually with the ORG instruction. \n\nThe MOV instruction\
+    \ allows moving data between registers, or registers and memory, but indirect\
+    \ addressing can only be performed using the BX register. \n\nThe Arithmetic Logic\
+    \ Unit can only perform only basic operations. Students must therefore implement\
+    \ their own advanced operations such as multiplication.\n"
+  6: 'The simulator features a rich set of Input/Output Devices such as a keyboard,
+    screen, switches, leds and a printer, with different connection configurations.
+
+
+    These can be accessed via different internal devices, using either hardware interrupts
+    or polling. '
+  7: For both teachers and students, VonSim has a thorough and easy to read documentation,
+    in english and spanish.
+  8: 'VonSim is used everyday by hundreds of students!
+
+    Almost one-fourth of them use mobile devices.'
+  9: "VonSim was originally developed by Facundo Quiroga in 2017. In 2023, Juan Seery\
+    \ rewrote the entire application in TypeScript using the React framework, introducing\
+    \ many quality of life features such as animations, code export and color themes.\
+    \ \nJuan is also the current maintainer. \nVonSim is open-source and free to use.\
+    \  Thank you for your interest!"

@@ -1451,6 +1451,7 @@ dependencies = [
     { name = "pyyaml" },
     { name = "returns" },
     { name = "tqdm" },
+    { name = "unoserver" },
     { name = "yamlable" },
 ]
 
@@ -1471,6 +1472,7 @@ requires-dist = [
     { name = "pyyaml", specifier = ">=6.0.3" },
     { name = "returns", specifier = ">=0.26.0" },
     { name = "tqdm", specifier = ">=4.67.1" },
+    { name = "unoserver", specifier = ">=3.4" },
     { name = "yamlable", specifier = ">=1.1.1" },
 ]
 
@@ -1691,6 +1693,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/72/94/1a15dd82efb362ac84269196e94cf00f187f7ed21c242792a923cdb1c61f/typing_extensions-4.15.0.tar.gz", hash = "sha256:0cea48d173cc12fa28ecabc3b837ea3cf6f38c6d1136f85cbaaf598984861466", size = 109391, upload-time = "2025-08-25T13:49:26.313Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/18/67/36e9267722cc04a6b9f15c7f3441c2363321a3ea07da7ae0c0707beb2a9c/typing_extensions-4.15.0-py3-none-any.whl", hash = "sha256:f0fa19c6845758ab08074a0cfa8b7aecb71c999ca73d62883bc25cc018c4e548", size = 44614, upload-time = "2025-08-25T13:49:24.86Z" },
+]
+
+[[package]]
+name = "unoserver"
+version = "3.4"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/eb/4d/1bdb4f4a8c7fa128a5ca047672d5760228bafc290f2d5ce8cd46d4d1658a/unoserver-3.4.tar.gz", hash = "sha256:3dcf2204013def1d1ddd3671f38b11346bdf349fef9728277462666a8a634419", size = 80101, upload-time = "2025-09-26T14:27:55.15Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c1/62/4737a8ef62b985d8c6670c1b2152bd0d47d828174e6b7b1ebde602a7699a/unoserver-3.4-py3-none-any.whl", hash = "sha256:64c24d33d4f65d680a2d9f676518cb28e7fd6c1f9d9a745c33e4a4cb59afdfcd", size = 24601, upload-time = "2025-09-26T14:27:52.663Z" },
 ]
 
 [[package]]

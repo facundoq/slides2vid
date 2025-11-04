@@ -1,0 +1,9 @@
+texts:
+  0: "Hello! \nI want to tell you about VonSim, an educational simulator for learning\
+    \ Assembly. "
+  1: "We created VonSim to teach Assembly at the Universidad Nacional de La Plata,\
+    \ where we have more than a thousand students per year. \nPreviously, we used\
+    \ a very old simulator called MSX88. \nVonSim was born as a replacement of MSX88,\
+    \ providing a backwards compatible version of the simulator with modern IDE features.\n\
+    VonSim is now 8 years old, and has had a very positive impact in the learning\
+    \ experience of our students."
