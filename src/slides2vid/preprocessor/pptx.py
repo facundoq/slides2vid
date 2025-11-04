@@ -30,6 +30,8 @@ class PPTXAudioPreprocessor(BasePreprocessor):
         changed = [True for i in range(n)]
         pbar = tqdm.tqdm(enumerate(presentation.slides),total=n)
         pbar.set_description("Generating slide audios")
+        #TODO: compute first which audios need to be generated
+        # add engine support for parallelization
         for i,slide in pbar:
             if slide.has_notes_slide:
                 text = slide.notes_slide.notes_text_frame.text

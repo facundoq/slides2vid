@@ -39,6 +39,8 @@ class Project:
         pbar.set_description("Generating slide videos")
         for i in pbar:
             if images.changed(i) or audios.changed(i):
+                # TODO: parallelize
+                # TODO: replace audio if image did not change? or sth similar
                 generator.generate(images.path(i), audios.path(i),video_paths[i])
         return video_paths
 

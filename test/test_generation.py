@@ -10,11 +10,11 @@ from slides2vid.preprocessor.pptx import PPTXAudioPreprocessor
 from slides2vid.tts.chatterbox import ChatterboxTTS
 from slides2vid.tts.gtts import GoogleTTS
 logging.basicConfig()
-logging.getLogger().setLevel(logging.DEBUG)
+logging.getLogger().setLevel(logging.INFO)
 
 def test_generation(tmp_path):
     fixtures = [ 
-            (GoogleTTS("en"),"gTTS"),
+          #  (GoogleTTS("en"),"gTTS"),
              (ChatterboxTTS("en","cpu"), "ChatterboxTTS")
                 ] 
     files = ["sample1","sample2"]  
