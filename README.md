@@ -4,18 +4,45 @@ Convert slides w/ notes to a video presentation using TTS.
 
 ```mermaid
  flowchart-elk LR;
+   
+flowchart-elk LR;
+    PDF{{📄 PDF}}
+    PPTX{{📄 PPTX}}
+    ODT{{📄 ODT}}
+    AF{{🖿🎤 Audio Folder}}
+    TF{{🖿💬 Text Folder}}
+    IF{{🖿🖼️ Image Folder}}
+    Video{{🎥 Video}}
+
     PDF-->ImagePreprocessor;
     PPTX-->ImagePreprocessor;
-    IF[Image Folder]-->ImagePreprocessor;
+    ODT-->ImagePreprocessor;
+    IF-->ImagePreprocessor;
     PPTX-->AudioPreprocessor;
-    AF[Audio Folder]-->AudioPreprocessor;
-    TF[Text Folder]-->AudioPreprocessor;
+    ODT-->AudioPreprocessor;
+    AF-->AudioPreprocessor;
+    TF-->AudioPreprocessor;
     
+    subgraph ImagePreprocessor
+        python-pptx
+        uniconv
+    end
+
+    subgraph AudioPreprocessor
+        python-pptx
+        gTTS
+        chatterbox-tts
+    end
+
+     subgraph SlideGenerator
+        ffmpeg
+    end
+
     ImagePreprocessor-->SIL[Slide Image List];
     AudioPreprocessor-->SAL[Slide Audio List];
-    SAL-->Project;
-    SIL-->Project;
-    SVL[Slide Video List];
-    Project-->Video;
-    SVL-->Video;
+    SAL-->SlideGenerator;
+    SIL-->SlideGenerator;
+    SlideGenerator-->Video;
+    
+
 ```

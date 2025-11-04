@@ -2,6 +2,10 @@
 import faulthandler
 
 from slides2vid.core import Project
+from slides2vid.preprocessor.pdf import PDFImagePreprocessor
+from slides2vid.preprocessor.pptx import PPTXAudioPreprocessor
+from slides2vid.tts.chatterbox import ChatterboxTTS
+from slides2vid.tts.gtts import GoogleTTS
 faulthandler.enable()
 # from pptx import Presentation
 import lxml.etree
@@ -20,13 +24,24 @@ def main():
     parser.add_argument('-v --pdf', help='input pdf path', required=True)
     parser.add_argument('-o', '--output', help='output path', required=True)
     parser.add_argument('-l', '--language', help='Language code: en, es, etc..', required=True)
+    parser.add_argument('-t', '--tts',  choices=['gtts', 'chatterbox'], help='TTS engine to generate audio', default="chatterbox")
     args = parser.parse_args()
     print("Starting..")
     with tempfile.TemporaryDirectory() as work_path:
         work_path = Path("output")
-        os.makedirs(work_path, exist_ok=True)
-        project = Project(work_path,args.language)
-        project.make_video(Path(args.pptx), Path(args.pdf), Path(args.output))
+        work_path.mkdir(parents=True, exist_ok=True)
+        p = Project(work_path)
+        images = PDFImagePreprocessor(args.pdf,work_path)
+        
+        if args.tts == "gtts":
+            tts_engine = GoogleTTS(args.language)
+        elif args.tts == "chatterbox":
+            tts_engine = ChatterboxTTS(args.language)
+        else:
+            raise ValueError(f"Unknown tts engine: {args.tts}")
+           
+        audios = PPTXAudioPreprocessor(args.pptx,work_path,tts_engine)
+        p.make_video(images,audios,args.output)
 
 
 if __name__ == '__main__':

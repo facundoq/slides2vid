@@ -21,7 +21,7 @@ FFMPEG_NAME = "ffmpeg"
 
 class FFMPEGSlideGenerator(SlideGenerator):
     def generate(self, image_path: Path, audio_path: Path, video_path: Path) -> None:
-        stream = ffmpeg.input(str(image_path), loop=1).filter('crop', 'iw-2*mod(iw,2)', 'ih-2*mod(ih,2)')
+        stream = ffmpeg.input(str(image_path), loop=1).filter('crop', 'iw-mod(iw,2)', 'ih-mod(ih,2)')
         audio = ffmpeg.input(str(audio_path))
         options = {
             "acodec": "aac",

@@ -1,31 +1,60 @@
 
 
-from abc import abstractmethod
+from abc import ABC, abstractmethod
+from os import path
 from pathlib import Path
-from slides2vid.core import Project
+from typing import Any
 
+import yaml
 
-class Preprocessor:
+class Preprocessor(ABC):
 
     @abstractmethod
-    def preprocess(self)->Project:
+    def __len__(self):
         raise NotImplementedError
     
+    @abstractmethod
+    def path(self,i)->Path:
+        raise NotImplementedError
+    
+    @abstractmethod
+    def changed(self,i)->bool:
+        raise NotImplementedError
+    
+class BasePreprocessor(Preprocessor):
+    def __init__(self,paths:list[Path],changed:list[bool]) -> None:
+        assert len(paths) == len(changed)
+        self.paths = paths
+        self.changed_list = changed
 
-    def generate_images_from_pdf(self,pdf_path:Path):
-        
-        last_modified_pdf = pdf_path.stat().st_mtime
-        image_paths = [self.image_path(i) for i in range(n)]
-        images_exist = all(map(lambda p: p.exists(),image_paths))
-        if last_modified_pdf != self.last_modified_pdf or not images_exist:
-            images = convert_from_path(pdf_path)
-            pbar = tqdm.tqdm(enumerate(images),total=n)
-            pbar.set_description("Generating slide images")
-            for i,image in pbar:
-                image.save(self.image_path(i))
-            images_changed = True
+    def __len__(self):
+        return len(self.paths)
+    def path(self,i)->Path:
+        return self.paths[i]
+    def changed(self,i)->bool:
+        return self.changed_list[i]
+    
+class Cache:
+    def __init__(self,work_path:Path,obj:Any,cache={}) -> None:
+        self.cache_path = work_path/ f"{obj.__class__.__name__}_cache.yaml"
+        self.load_cache(cache)
+    
+    def update(self,items:dict[str,Any]):
+        self.items = items
+        self.save_cache()
+
+    def save_cache(self,):
+        with open(self.cache_path, 'w') as file:
+            yaml.dump(self.items,file) 
+    def __setitem__(self, key, item):
+        self.items[key] = item
+    def __getitem__(self, key):
+        return self.items[key]
+    
+    def load_cache(self,default:dict[str,Any]):
+        if self.cache_path.exists():
+            with open(self.cache_path, 'r') as file:
+                self.items= yaml.safe_load(file)  
         else:
-            images_changed = False
-
-        self.last_modified_pdf = last_modified_pdf
-        return image_paths,images_changed
+            self.items = default
+    
