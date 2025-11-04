@@ -1,7 +1,11 @@
 from pathlib import Path
 import shutil
 import pytest
-from slides2vid.core import make_video
+from slides2vid.core import Project
+
+import logging
+logging.basicConfig()
+logging.getLogger().setLevel(logging.DEBUG)
 
 def test_generation(tmp_path):
     filename = "sample2"
@@ -14,5 +18,6 @@ def test_generation(tmp_path):
     # work
     #shutil.rmtree(work_path)
     #work_path.mkdir(parents=True, exist_ok=True)
-    make_video(text,images,video,work_path=work_path)
+    p = Project(work_path,language="en")
+    p.make_video(text,images,video)
     assert video.exists()
