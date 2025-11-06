@@ -1,0 +1,40 @@
+texts:
+  1: Hello! I want to tell you about VonSim, an educational simulator for learning
+    Assembly.
+  2: We created VonSim for our courses that teach Assembly at the Universidad Nacional
+    de La Plata, where we have more than a thousand students per year. Previously,
+    we used a very old simulator called MSX88, and VonSim was born as a web application
+    that provided a backwards compatible version of the instruction set. VonSim is
+    now 8 years old, and has had a very positive impact in the learning experience.
+  3: So, what is VonSim? VonSim is a web application that features an integrated editor
+    and simulator for a simplified x86 architecture.Students can write and run programs
+    directly in VonSim, and visualize the CPU, Buses, Memory and I/O devices as instructions
+    are executed.It also has other cool features, such as an integrated example gallery,
+    mobile layout, and easy sharing of code with a QR code.VonSim is open-source and
+    free to use.
+  4: The IDE features continuous compilation and detailed error messages that allow
+    quick feedback cycles and promote student independence.
+  5: 'The 16-bit architecture features only 4 registers: AX, BX, CX and DX.These can
+    be addressed as half-registers with alternative names: AH, AL, and so own, where
+    H stands for High and L for Low.It also includes typical state registers such
+    as the Instruction and Stack Pointers, and a fixed-point Arithmetic Logic Unit'
+  6: The simplified assembly instruction set requires specifying the memory layout
+    manually with the ORG instruction. The MOV instruction allows moving data between
+    registers, or registers and memory. Indirect addressing can only be performed
+    using the BX register. The Arithmetic Logic Unit can only perform only logical
+    operators and sums.
+  7: VonSim also features a rich set of Input/Output Devices such as a keyboard, screen,
+    switches, leds and a printer. These can be accessed via different internal devices
+    via either hardware interrupts with the Programmable Interrupt Controller or polling.
+    Communication with the devices can be performed via the Programmable Input Output
+    device (PIO) or the HANDSHAKE, which is specialized for the Centronics printer
+    protocol.
+  8: VonSim has a thorough and easy to read documentation, both in english and spanish.
+  9: VonSim is used everyday by hundreds of students! Almost one-fourth of them use
+    mobile devices.
+  10: VonSim was originally developed by Facundo Quiroga, in Scala.In 2023, Juan Seery
+    rewrote the entire application in TypeScript using the React framework, improving
+    maintainability and introducing many quality of life features such as animations,
+    code export and color themes. Juan is also the current maintainer. Try out VonSim
+    at vonsim.github.com. You can also reach us at github.com/vonsim. Thank you for
+    your interest in VonSim!

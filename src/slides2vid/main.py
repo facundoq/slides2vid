@@ -43,7 +43,7 @@ def main():
         else:
             raise ValueError(f"Unknown tts engine: {args.tts}")
         audios = PPTXAudioPreprocessor(args.pptx,work_path,tts_engine)
-        p.make_video(images,audios,args.output)
+        p.run(images,audios,args.output)
 
 
 if __name__ == '__main__':

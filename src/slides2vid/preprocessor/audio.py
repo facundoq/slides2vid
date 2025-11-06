@@ -36,7 +36,7 @@ class AudioPreprocessor(Preprocessor):
         for _,(i,text) in pbar:
             audio_path = self.work_path/f'frame_{i}.mp3'
             paths.append(audio_path)
-            if changed[i] and not audio_path.exists():
+            if changed[i] or not audio_path.exists():
                 self.engine.generate(text,audio_path)
                 changed_list.append(True)
             else:
