@@ -13,7 +13,6 @@ def test_odt_audio_preprocessor():
     engine = GoogleTTS("en")
     preprocessor = ODPAudioPreprocessor(work_path,odp_path,engine)
     texts = preprocessor.get_slides_text()
-    print(texts)
     assert isinstance(texts,dict)
     result = preprocessor.run()
     assert len(result) == len(texts)
