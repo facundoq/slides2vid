@@ -2,8 +2,8 @@
 import faulthandler
 
 from slides2vid.core import Project
-from slides2vid.preprocessor.pdf import PDFImagePreprocessor
-from slides2vid.preprocessor.pptx import PPTXAudioPreprocessor
+from slides2vid.preprocessor.pdf import PDFImageConverter
+from slides2vid.preprocessor.pptx import PPTXAudioConverter
 from slides2vid.tts.chatterbox import ChatterboxTTS
 from slides2vid.tts.gtts import GoogleTTS
 faulthandler.enable()
@@ -34,7 +34,7 @@ def main():
         work_path = Path("output")
         work_path.mkdir(parents=True, exist_ok=True)
         p = Project(work_path)
-        images = PDFImagePreprocessor(args.pdf,work_path)
+        images = PDFImageConverter(args.pdf,work_path)
         
         if args.tts == "gtts":
             tts_engine = GoogleTTS(args.language)
@@ -42,7 +42,7 @@ def main():
             tts_engine = ChatterboxTTS(args.language)
         else:
             raise ValueError(f"Unknown tts engine: {args.tts}")
-        audios = PPTXAudioPreprocessor(args.pptx,work_path,tts_engine)
+        audios = PPTXAudioConverter(args.pptx,work_path,tts_engine)
         p.run(images,audios,args.output)
 
 

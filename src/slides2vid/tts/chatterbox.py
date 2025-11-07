@@ -17,6 +17,9 @@ class ChatterboxTTS(TTSEngine):
         self.language = language
         self.model = None
 
+    def __str__(self) -> str:
+        return f"{self.__class__.__name__}_{self.language}_{self.device}"
+    
     def generate(self, text: str,path:Path,):
         if self.model is None:
             self.model = ChatterboxMultilingualTTS.from_pretrained(device=self.device)

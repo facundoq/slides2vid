@@ -1,18 +1,18 @@
-from slides2vid.preprocessor.core import BasePreprocessorResult,  Preprocessor, PreprocessorResult
+from slides2vid.converter.core import BaseConverterResult,  Converter, ConverterResult
 import tqdm
 from pdf2image import convert_from_path,pdfinfo_from_path
 
 from pathlib import Path
 
 
-class PDFImagePreprocessor(Preprocessor):
+class PDFImageConverter(Converter):
     LAST_MODIFIED_KEY = "last_modified_pdf"
 
     def __init__(self,work_path:Path,pdf_path:Path) -> None:
         super().__init__(work_path)
         self.pdf_path = pdf_path
 
-    def run(self)-> PreprocessorResult:
+    def run(self)-> ConverterResult:
         n = pdfinfo_from_path(str(self.pdf_path.absolute()))["Pages"]
         image_paths = [self.work_path/f'frame_{i}.png' for i in range(n)]
         images_exist = all(map(lambda p: p.exists(),image_paths))
@@ -28,4 +28,4 @@ class PDFImagePreprocessor(Preprocessor):
             images_changed = [False]*n
         self.cache.update_file_modification(self.pdf_path,self.LAST_MODIFIED_KEY)
         
-        return BasePreprocessorResult(image_paths,images_changed)
+        return BaseConverterResult(image_paths,images_changed)

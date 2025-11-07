@@ -7,9 +7,9 @@ from slides2vid.core import Project
 
 import logging
 
-from slides2vid.preprocessor.odp import ODPAudioPreprocessor, ODPImagePreprocessor
-from slides2vid.preprocessor.pdf import PDFImagePreprocessor
-from slides2vid.preprocessor.pptx import PPTXAudioPreprocessor
+from slides2vid.converter.odp import ODPAudioConverter, ODPImageConverter
+from slides2vid.converter.pdf import PDFImageConverter
+from slides2vid.converter.pptx import PPTXAudioConverter
 from slides2vid.slides import FFMPEGSlideGenerator, SlideGenerator
 from slides2vid.tts.base import TTSEngine
 from slides2vid.tts.chatterbox import ChatterboxTTS
@@ -17,20 +17,36 @@ from slides2vid.tts.gtts import GoogleTTS
 logging.basicConfig()
 logging.getLogger().setLevel(logging.INFO)
 
+data_path = Path("test/data")
 
+engines = [ GoogleTTS("en"),
+            ChatterboxTTS("en","cpu"),
+            ChatterboxTTS("en","cpu",audio_prompt_path=data_path/"messi.wav")]
+
+def audio_converters(filename:str, work_path:Path,tts_engine:TTSEngine,pptx_path:Path):
+    
+    return [
+        PPTXAudioConverter(work_path,data_path/f"{filename}.pptx",tts_engine),
+        ODPAudioConverter(work_path,data_path/f"{filename}.odp",tts_engine),
+    ]
+    
+
+def image_converters(filename:str, work_path:Path):
+    
+    return [
+        PDFImageConverter(work_path,data_path/f"{filename}.pdf"),
+        ODPImageConverter(work_path,data_path/f"{filename}.odp"),
+    ]
+    
 def pdf_pptx_project(work_path:Path,pdf_path:Path,pptx_path:Path,video_path:Path,tts_engine:TTSEngine):
     
     generator = FFMPEGSlideGenerator(work_path)
-    pdf_images = PDFImagePreprocessor(work_path,pdf_path)
-    pptx_audios = PPTXAudioPreprocessor(work_path,tts_engine,pptx_path)
+    pdf_images = PDFImageConverter(work_path,pdf_path)
+    pptx_audios = PPTXAudioConverter(work_path,tts_engine,pptx_path)
     p = Project(work_path,generator,pdf_images,pptx_audios,video_path)
     return p
 
-data_path = Path("test/data")
 
-engines = [GoogleTTS("en"),
-            ChatterboxTTS("en","cpu"),
-            ChatterboxTTS("en","cpu",audio_prompt_path=data_path/"messi.wav")]
  
 def pdf_pptx_project_fixtures(work_path:Path):
     filename = "sample2"

@@ -1,14 +1,7 @@
-import faulthandler
-from fileinput import filename
-from tkinter import LAST
-
 import tqdm
 from pathlib import Path
 
-
-from pdf2image import convert_from_path,pdfinfo_from_path
-
-from slides2vid.preprocessor.core import Preprocessor
+from slides2vid.converter.core import Converter
 from slides2vid.slides import  SlideGenerator
 
 # from yamlable import YamlAble, yaml_info
@@ -24,7 +17,7 @@ class Project:
     def project_config_path(self):
         return self.work_path / self.project_filename
     
-    def __init__(self, work_folder:Path,generator:SlideGenerator,images_preprocessor:Preprocessor, audios_preprocessor:Preprocessor,video_path:Path) -> None:
+    def __init__(self, work_folder:Path,generator:SlideGenerator,images_preprocessor:Converter, audios_preprocessor:Converter,video_path:Path) -> None:
         self.generator = generator
         self.images_preprocessor = images_preprocessor
         self.audios_preprocessor = audios_preprocessor

@@ -1,22 +1,17 @@
 from genericpath import exists
 from re import sub
 import subprocess
-from slides2vid.preprocessor.audio import AudioPreprocessor
-from slides2vid.preprocessor.core import  Preprocessor, PreprocessorResult
+from slides2vid.converter.audio import AudioConverter
+from slides2vid.converter.core import  Converter, ConverterResult
 
-
-import tqdm
-from pdf2image import convert_from_path,pdfinfo_from_path
-
-import yaml
 
 from pathlib import Path
 
-from slides2vid.preprocessor.pdf import PDFImagePreprocessor
+from slides2vid.converter.pdf import PDFImageConverter
 from slides2vid.tts.base import TTSEngine
 
 
-class ODPImagePreprocessor(Preprocessor):
+class ODPImageConverter(Converter):
     LAST_MODIFIED_KEY = "last_modified"
     
     def __init__(self,work_path:Path,odt_path:Path) -> None:
@@ -24,20 +19,21 @@ class ODPImagePreprocessor(Preprocessor):
         self.odt_path = odt_path
         
     
-    def run(self)-> PreprocessorResult:
+    def run(self)-> ConverterResult:
         file_changed = self.cache.file_changed(self.odt_path,self.LAST_MODIFIED_KEY)
         pdf_path = self.odt_path.with_suffix(".pdf")
         if file_changed or not pdf_path.exists():
             subprocess.run(f"soffice --headless --convert-to pdf {self.odt_path}",shell=True)
-        pdf_preprocessor = PDFImagePreprocessor(self.work_path,pdf_path)
-        self.cache.update_file_modification(self.odt_path,self.LAST_MODIFIED_KEY)
+            self.cache.update_file_modification(self.odt_path,self.LAST_MODIFIED_KEY)
+        pdf_preprocessor = PDFImageConverter(self.work_path,pdf_path)
+        
         return pdf_preprocessor.run()
     
 
 from odf.opendocument import load
 from odf import draw, presentation, text
 
-class ODPAudioPreprocessor(AudioPreprocessor):
+class ODPAudioConverter(AudioConverter):
     LAST_MODIFIED_KEY = "last_modified"
     
     def __init__(self,work_path:Path,odt_path:Path,engine:TTSEngine) -> None:
@@ -56,11 +52,9 @@ class ODPAudioPreprocessor(AudioPreprocessor):
             notes_by_slide[i+1] = notes_text.strip()        
         return notes_by_slide
 
-    def run(self)-> PreprocessorResult:
+    def run(self)-> ConverterResult:
         texts = self.get_slides_text()
-        changed = self.get_changed(texts)
-        result = self.generate_audios(texts,changed)
-        self.update_texts_cache(texts)
+        result = self.generate_audios(texts)
         return result
     
     
