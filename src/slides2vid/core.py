@@ -19,8 +19,8 @@ class Project:
     
     def __init__(self, work_folder:Path,generator:SlideGenerator,images_preprocessor:Converter, audios_preprocessor:Converter,video_path:Path) -> None:
         self.generator = generator
-        self.images_preprocessor = images_preprocessor
-        self.audios_preprocessor = audios_preprocessor
+        self.images_converter = images_preprocessor
+        self.audios_converter = audios_preprocessor
         self.work_path = work_folder
         self.video_path = video_path
     
@@ -34,8 +34,8 @@ class Project:
         
     def generate_videos(self):
         # TODO paralellize
-        images = self.images_preprocessor.run()
-        audios = self.audios_preprocessor.run()
+        images = self.images_converter.run()
+        audios = self.audios_converter.run()
         assert len(images) == len(audios)
         n = len(images)
         video_paths = [self.work_path / f"frame_{i}.mp4" for i in range(n)]
