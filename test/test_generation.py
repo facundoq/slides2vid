@@ -3,14 +3,14 @@ import shutil
 
 from click import prompt
 import pytest
-from slides2vid.core import Project
+from slides2vid.core.project import Project
 
 import logging
 
 from slides2vid.converter.odp import ODPAudioConverter, ODPImageConverter
 from slides2vid.converter.pdf import PDFImageConverter
 from slides2vid.converter.pptx import PPTXAudioConverter
-from slides2vid.slides import FFMPEGSlideGenerator, SlideGenerator
+from slides2vid.core.video import FFMPEGVideoSlideGenerator, SlideGenerator
 from slides2vid.tts.base import TTSEngine
 from slides2vid.tts.chatterbox import ChatterboxTTS
 from slides2vid.tts.gtts import GoogleTTS
@@ -40,9 +40,9 @@ def image_converters(filename:str, work_path:Path):
     
 def pdf_pptx_project(work_path:Path,pdf_path:Path,pptx_path:Path,video_path:Path,tts_engine:TTSEngine):
     
-    generator = FFMPEGSlideGenerator(work_path)
+    generator = FFMPEGVideoSlideGenerator(work_path)
     pdf_images = PDFImageConverter(work_path,pdf_path)
-    pptx_audios = PPTXAudioConverter(work_path,tts_engine,pptx_path)
+    pptx_audios = PPTXAudioConverter(work_path,pptx_path,tts_engine)
     p = Project(work_path,generator,pdf_images,pptx_audios,video_path)
     return p
 
@@ -72,7 +72,6 @@ def project_fixtures(work_path:Path):
     return  list(pdf_pptx_project_fixtures(work_path))
 
 def test_generation(tmp_path):
-    
     work_path = Path()/"test/work_folders"
     work_path.mkdir(parents=True, exist_ok=True)
     for p in project_fixtures(work_path):

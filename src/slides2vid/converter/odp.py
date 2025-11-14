@@ -1,43 +1,46 @@
-from genericpath import exists
-from re import sub
-import subprocess
-from slides2vid.converter.audio import AudioConverter
-from slides2vid.converter.core import  Converter, ConverterResult
-
-
 from pathlib import Path
+import subprocess
+import typing
+from odf.opendocument import load
+from odf import draw, presentation
 
+from . import  ConverterResult,Converter
+from slides2vid.converter.audio import AudioConverter
 from slides2vid.converter.pdf import PDFImageConverter
 from slides2vid.tts.base import TTSEngine
+
+from slides2vid.utils import tool
+
 
 
 class ODPImageConverter(Converter):
     LAST_MODIFIED_KEY = "last_modified"
     
-    def __init__(self,work_path:Path,odt_path:Path) -> None:
-        super().__init__(work_path)
-        self.odt_path = odt_path
-        
+    def __init__(self,work_path:Path,odp_path:Path,verbose=False) -> None:
+        super().__init__(work_path,verbose)
+        tool.check_soffice_installed()
+        self.odp_path = odp_path
+        self.pdf_preprocessor = None
     
     def run(self)-> ConverterResult:
-        file_changed = self.cache.file_changed(self.odt_path,self.LAST_MODIFIED_KEY)
-        pdf_path = self.odt_path.with_suffix(".pdf")
+        file_changed = self.cache.file_changed(self.odp_path,self.LAST_MODIFIED_KEY)
+        pdf_path = self.odp_path.with_suffix(".pdf")
         if file_changed or not pdf_path.exists():
-            subprocess.run(f"soffice --headless --convert-to pdf {self.odt_path}",shell=True)
-            self.cache.update_file_modification(self.odt_path,self.LAST_MODIFIED_KEY)
-        pdf_preprocessor = PDFImageConverter(self.work_path,pdf_path)
-        
-        return pdf_preprocessor.run()
+            tool.soffice(["--convert-to", "pdf", f"{self.odp_path}"])
+        self.pdf_preprocessor = PDFImageConverter(self.work_path,pdf_path)
+        return self.pdf_preprocessor.run()
     
+    def finished(self, paths: list[Path]) -> None:
+        if not self.pdf_preprocessor is None:
+            self.pdf_preprocessor.finished(paths)
+        self.cache.update_file_modification(self.odp_path,self.LAST_MODIFIED_KEY)
 
-from odf.opendocument import load
-from odf import draw, presentation, text
+
 
 class ODPAudioConverter(AudioConverter):
-    LAST_MODIFIED_KEY = "last_modified"
     
-    def __init__(self,work_path:Path,odt_path:Path,engine:TTSEngine) -> None:
-        super().__init__(work_path,engine)
+    def __init__(self,work_path:Path,odt_path:Path,engine:TTSEngine,verbose=False) -> None:
+        super().__init__(work_path,engine,verbose)
         self.odt_path = odt_path
         
     def get_slides_text(self)->dict[int,str]:
@@ -54,7 +57,6 @@ class ODPAudioConverter(AudioConverter):
 
     def run(self)-> ConverterResult:
         texts = self.get_slides_text()
-        result = self.generate_audios(texts)
-        return result
+        return self.generate_audios(texts)
     
     

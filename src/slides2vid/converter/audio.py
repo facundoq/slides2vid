@@ -1,5 +1,6 @@
 import tqdm
-from .core import BaseConverterResult, Converter, ConverterResult
+
+from . import Converter,ConverterResult
 from pathlib import Path
 from slides2vid.tts.base import TTSEngine
 
@@ -9,8 +10,8 @@ logger = logging.getLogger(__name__)
 class AudioConverter(Converter):
     TEXTS_KEY = "texts"
     
-    def __init__(self,work_path:Path,engine:TTSEngine) -> None:
-        super().__init__(work_path)
+    def __init__(self,work_path:Path,engine:TTSEngine,verbose=False) -> None:
+        super().__init__(work_path,verbose)
         self.engine=engine
         
     def get_texts_cache(self)->dict[int,str]:
@@ -27,23 +28,22 @@ class AudioConverter(Converter):
     
     def generate_audios(self,texts:dict[int,str])->ConverterResult:
         #TODO: add engine support for parallelization
-        changed = self.get_changed(texts)
+        changed_texts = self.get_changed(texts)
         paths = []
-        changed_list = []
+        changed_audios = []
         pbar = tqdm.tqdm(enumerate(texts.items()),total=len(texts))
         pbar.set_description("Generating slide audios")
         for _,(i,text) in pbar:
             audio_path = self.work_path/f'frame_{i}.mp3'
             paths.append(audio_path)
-            if changed[i] or not audio_path.exists():
+            if changed_texts[i] or not audio_path.exists():
                 self.engine.generate(text,audio_path)
-                changed_list.append(True)
+                changed_audios.append(True)
             else:
                 logger.info(f"Slide {i} text did not change, skipping audio generation.")
-                changed_list.append(False)
-                
-        self.update_texts_cache(texts)
-        return BaseConverterResult(paths,changed_list)
+                changed_audios.append(False)
+        self.update_texts_cache(texts)        
+        return paths,changed_audios
 
     
     

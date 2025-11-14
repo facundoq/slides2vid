@@ -6,8 +6,9 @@ from .base import TTSEngine
 
 import torchaudio as ta
 from chatterbox.tts import ChatterboxTTS
-from chatterbox.mtl_tts import ChatterboxMultilingualTTS
+from chatterbox.mtl_tts import ChatterboxMultilingualTTS, SUPPORTED_LANGUAGES
 
+CHATTERBOX_LANGUAGES = SUPPORTED_LANGUAGES
 
 class ChatterboxTTS(TTSEngine):
     def __init__(self,language:str,device="cpu",audio_prompt_path:Path=None) -> None:
@@ -18,7 +19,8 @@ class ChatterboxTTS(TTSEngine):
         self.model = None
 
     def __str__(self) -> str:
-        return f"{self.__class__.__name__}_{self.language}_{self.device}"
+        prompt = self.audio_prompt_path.name.split(".")[0] if self.audio_prompt_path is not None else "no_prompt"
+        return f"{self.__class__.__name__}_{self.language}_{self.device}_{prompt}"
     
     def generate(self, text: str,path:Path,):
         if self.model is None:
