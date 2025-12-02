@@ -17,7 +17,8 @@ class Project:
     def project_config_path(self):
         return self.work_path / self.project_filename
     
-    def __init__(self, work_folder:Path,generator:SlideGenerator,images_preprocessor:Converter, audios_preprocessor:Converter,video_path:Path,verbose=False) -> None:
+    def __init__(self, id:str,work_folder:Path,generator:SlideGenerator,images_preprocessor:Converter, audios_preprocessor:Converter,video_path:Path,verbose=False) -> None:
+        self.id=id
         self.generator = generator
         self.images_converter = images_preprocessor
         self.audios_converter = audios_preprocessor

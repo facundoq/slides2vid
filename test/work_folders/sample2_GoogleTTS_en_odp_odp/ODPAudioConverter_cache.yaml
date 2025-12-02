@@ -1,0 +1,8 @@
+texts:
+  1: Hello! I want to tell you about VonSim, an educational simulator for Assembly.
+  2: We created VonSim to teach Assembly at the Universidad Nacional de La Plata,
+    where we have more than a thousand students per year. Previously, we used a very
+    old simulator called MSX88. VonSim was born as a replacement of MSX88, providing
+    a backwards compatible version of the simulator with modern IDE features.VonSim
+    is now 8 years old, and has had a very positive impact in the learning experience
+    of students.

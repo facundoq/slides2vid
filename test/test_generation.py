@@ -1,7 +1,7 @@
+from email.mime import image
+import itertools
 from pathlib import Path
-import shutil
 
-from click import prompt
 import pytest
 from slides2vid.core.project import Project
 
@@ -10,72 +10,74 @@ import logging
 from slides2vid.converter.odp import ODPAudioConverter, ODPImageConverter
 from slides2vid.converter.pdf import PDFImageConverter
 from slides2vid.converter.pptx import PPTXAudioConverter
-from slides2vid.core.video import FFMPEGVideoSlideGenerator, SlideGenerator
+from slides2vid.core.video import FFMPEGVideoSlideGenerator
 from slides2vid.tts.base import TTSEngine
 from slides2vid.tts.chatterbox import ChatterboxTTS
 from slides2vid.tts.gtts import GoogleTTS
 logging.basicConfig()
 logging.getLogger().setLevel(logging.INFO)
 
-data_path = Path("test/data")
 
-engines = [ GoogleTTS("en"),
-            ChatterboxTTS("en","cpu"),
-            ChatterboxTTS("en","cpu",audio_prompt_path=data_path/"messi.wav")]
+class Config:
+    lang = "en"
+    data_path = Path(f"test/data/{lang}")
+    output_path = Path(f"test/output/{lang}") 
+    output_path.mkdir(parents=True, exist_ok=True)
+    audio_prompts_path = data_path / "voice_models"
+    filenames = ["sample1","sample2"]
+    engines = [ GoogleTTS(lang),]
 
-def audio_converters(filename:str, work_path:Path,tts_engine:TTSEngine,pptx_path:Path):
-    
-    return [
-        PPTXAudioConverter(work_path,data_path/f"{filename}.pptx",tts_engine),
-        ODPAudioConverter(work_path,data_path/f"{filename}.odp",tts_engine),
-    ]
+class ConfigChatterbox(Config):
+    def __init__(self) -> None:     
+        self.engines = [ ChatterboxTTS(self.lang,"cpu"),
+                         ChatterboxTTS(self.lang,"cpu",audio_prompt_path=self.audio_prompts_path/"sample1.mp3")]
     
 
-def image_converters(filename:str, work_path:Path):
+def make_audio_converter(filepath:Path, work_path:Path,tts_engine:TTSEngine):
+    if filepath.suffix == ".pptx":
+        return PPTXAudioConverter(work_path,filepath,tts_engine)
+    elif filepath.suffix == ".odp":
+        return ODPAudioConverter(work_path,filepath,tts_engine)
+    else:
+        raise ValueError(f"Unsupported file type: {filepath.suffix}")
     
-    return [
-        PDFImageConverter(work_path,data_path/f"{filename}.pdf"),
-        ODPImageConverter(work_path,data_path/f"{filename}.odp"),
-    ]
-    
-def pdf_pptx_project(work_path:Path,pdf_path:Path,pptx_path:Path,video_path:Path,tts_engine:TTSEngine):
-    
-    generator = FFMPEGVideoSlideGenerator(work_path)
-    pdf_images = PDFImageConverter(work_path,pdf_path)
-    pptx_audios = PPTXAudioConverter(work_path,pptx_path,tts_engine)
-    p = Project(work_path,generator,pdf_images,pptx_audios,video_path)
-    return p
+def make_image_converter(filepath:Path, work_path:Path):
+    if filepath.suffix == ".pdf":
+        return PDFImageConverter(work_path,filepath)
+    elif filepath.suffix == ".odp":
+        return ODPImageConverter(work_path,filepath)
+    else:
+        raise ValueError(f"Unsupported file type: {filepath.suffix}")    
 
 
- 
-def pdf_pptx_project_fixtures(work_path:Path):
-    filename = "sample2"
-    for engine in engines:
-        id = f"{engine}_{filename}"
+def fixtures(c:Config,work_path:Path):
+    audio_inputs = ["pptx","odp"]
+    image_inputs = ["pdf","odp"]
+    configs = itertools.product(c.filenames,c.engines,image_inputs,audio_inputs)
+    for filename,engine,image_input,audio_input in configs:
+        id = f"{filename}_{engine}_{image_input}_{audio_input}"
         fixture_work_path = work_path/id
-        audios_path = data_path/f"{filename}.pptx"
-        images_path = data_path/f"{filename}.pdf"
-        video_path = fixture_work_path/f"output.mp4"
-        yield pdf_pptx_project(fixture_work_path,images_path,audios_path,video_path,engine)
+        
+        image_file = c.data_path/f"{filename}.{image_input}"
+        image_converter = make_image_converter(image_file,fixture_work_path)
+        audio_file = c.data_path/f"{filename}.{audio_input}"
+        audio_converter = make_audio_converter(audio_file,fixture_work_path,engine)
+        
+        video_path = c.output_path/f"{id}.mp4"
+        yield Project(id,fixture_work_path,
+                        FFMPEGVideoSlideGenerator(fixture_work_path),
+                        image_converter,
+                        audio_converter,
+                        video_path)
 
-# def odt_fixtures(work_path:Path):
-#     filename = "test.odt"
-#     for engine in engines:
-#         odt_path = data_path/"{filename}.odt"
-#         id = f"{engine}_{filename}"
-#         images = ODPImagePreprocessor(work_path,odt_path)    
-#         audios = ODPAudioPreprocessor(work_path,odt_path,engine)
-#         generator = FFMPEGSlideGenerator(work_path)
-#         p = Project(work_path,generator,images,audios,)
 
-def project_fixtures(work_path:Path):
-    return  list(pdf_pptx_project_fixtures(work_path))
+work_path = Path()/"test/work_folders"
+simple_fixtures = list(fixtures(Config(),work_path))
 
-def test_generation(tmp_path):
-    work_path = Path()/"test/work_folders"
+
+@pytest.mark.parametrize("p",simple_fixtures)
+def test_generation_simple(p:Project):
     work_path.mkdir(parents=True, exist_ok=True)
-    for p in project_fixtures(work_path):
-        #shutil.rmtree(p.work_path)
-        p.work_path.mkdir(parents=True, exist_ok=True)
-        p.run()
-        assert p.video_path.exists()    
+    p.work_path.mkdir(parents=True, exist_ok=True)
+    p.run()
+    assert p.video_path.exists()    
