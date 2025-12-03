@@ -25,6 +25,7 @@ class ODPImageConverter(Converter):
     def run(self)-> ConverterResult:
         file_changed = self.cache.file_changed(self.odp_path,self.LAST_MODIFIED_KEY)
         pdf_path = self.odp_path.with_suffix(".pdf")
+        pdf_path = self.work_path/pdf_path.name
         if file_changed or not pdf_path.exists():
             tool.soffice(["--convert-to", "pdf", f"{self.odp_path}"])
         self.pdf_preprocessor = PDFImageConverter(self.work_path,pdf_path)

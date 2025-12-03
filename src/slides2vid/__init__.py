@@ -1,6 +1,8 @@
 
 from .converter import Converter, ConverterResult
 from .converter.audio import TTSEngine
+from .tts.gtts import GoogleTTS
+from .tts.chatterbox import ChatterboxTTS  
 from .converter.pdf import PDFImageConverter
 from .converter.folder import FolderConverter,AudioFolderConverter,ImageFolderConverter
 from .converter.odp import ODPAudioConverter, ODPImageConverter
