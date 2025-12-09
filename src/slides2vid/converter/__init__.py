@@ -13,8 +13,9 @@ from pathlib import Path
 
 
 class Converter(ABC):
-    def __init__(self,work_path:Path,verbose=False) -> None:
+    def __init__(self,work_path:Path,verbose=False,force=False) -> None:
         super().__init__()
+        self.force=force
         self.work_path = work_path
         self.verbose=verbose
         self.cache = Cache(work_path,self)

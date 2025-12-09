@@ -12,7 +12,7 @@ from slides2vid.converter.pdf import PDFImageConverter
 from slides2vid.converter.pptx import PPTXAudioConverter
 from slides2vid.core.video import FFMPEGVideoSlideGenerator
 from slides2vid.tts.base import TTSEngine
-from slides2vid.tts.chatterbox import ChatterboxTTS
+from slides2vid.tts.chatterbox import ChatterboxTTS, ChatterboxTTSConfig
 from slides2vid.tts.gtts import GoogleTTS
 logging.basicConfig()
 logging.getLogger().setLevel(logging.INFO)
@@ -29,8 +29,10 @@ class Config:
 
 class ConfigChatterbox(Config):
     def __init__(self) -> None:     
+        
         self.engines = [ ChatterboxTTS(self.lang,"cpu"),
-                         ChatterboxTTS(self.lang,"cpu",audio_prompt_path=self.audio_prompts_path/"sample1.mp3")]
+                         ChatterboxTTS(self.lang,"cpu",config=ChatterboxTTSConfig(audio_prompt_path=self.audio_prompts_path/"sample1.mp3")),
+                    ]
     
 
 def make_audio_converter(filepath:Path, work_path:Path,tts_engine:TTSEngine):

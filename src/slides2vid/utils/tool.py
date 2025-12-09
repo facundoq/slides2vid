@@ -24,6 +24,7 @@ def check_ffmpeg_installed():
 
 def soffice(args: list[str]):
     args = [SOFFICE_NAME, "--headless"] + args
+    subprocess.check_call
     try:
         subprocess.run(args, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     except subprocess.CalledProcessError as e:

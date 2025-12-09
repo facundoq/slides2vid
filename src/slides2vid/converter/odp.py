@@ -16,8 +16,8 @@ from slides2vid.utils import tool
 class ODPImageConverter(Converter):
     LAST_MODIFIED_KEY = "last_modified"
     
-    def __init__(self,work_path:Path,odp_path:Path,verbose=False) -> None:
-        super().__init__(work_path,verbose)
+    def __init__(self,work_path:Path,odp_path:Path,verbose=False,force=False) -> None:
+        super().__init__(work_path,verbose,force)
         tool.check_soffice_installed()
         self.odp_path = odp_path
         self.pdf_preprocessor = None
@@ -27,7 +27,12 @@ class ODPImageConverter(Converter):
         pdf_path = self.odp_path.with_suffix(".pdf")
         pdf_path = self.work_path/pdf_path.name
         if file_changed or not pdf_path.exists():
-            tool.soffice(["--convert-to", "pdf", f"{self.odp_path}"])
+            args = ["--convert-to", "pdf", f"{self.odp_path}","--outdir",  f"{self.work_path}"]
+            if self.verbose:
+                print(f"Converting ODP to PDF with soffice: {' '.join(args)}")
+            tool.soffice(args)
+            if not pdf_path.exists():
+                raise tool.ToolError(f"Failed to convert {self.odp_path} to PDF, args: {args}")
         self.pdf_preprocessor = PDFImageConverter(self.work_path,pdf_path)
         return self.pdf_preprocessor.run()
     
@@ -40,8 +45,8 @@ class ODPImageConverter(Converter):
 
 class ODPAudioConverter(AudioConverter):
     
-    def __init__(self,work_path:Path,odt_path:Path,engine:TTSEngine,verbose=False) -> None:
-        super().__init__(work_path,engine,verbose)
+    def __init__(self,work_path:Path,odt_path:Path,engine:TTSEngine,verbose=False,force=False) -> None:
+        super().__init__(work_path,engine,verbose,force)
         self.odt_path = odt_path
         
     def get_slides_text(self)->dict[int,str]:

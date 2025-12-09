@@ -14,7 +14,7 @@ class PDFImageConverter(Converter):
 
     def run(self)-> ConverterResult:
         n = pdfinfo_from_path(str(self.pdf_path.absolute()))["Pages"]
-        paths = [self.work_path/f'frame_{i}.png' for i in range(n)]
+        paths = [self.work_path/f'frame_{i:03}.png' for i in range(n)]
         images_exist = all(map(lambda p: p.exists(),paths))
         file_changed = self.cache.file_changed(self.pdf_path,self.LAST_MODIFIED_KEY)
         if file_changed or not images_exist:

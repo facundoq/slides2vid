@@ -10,8 +10,8 @@ logger = logging.getLogger(__name__)
 class AudioConverter(Converter):
     TEXTS_KEY = "texts"
     
-    def __init__(self,work_path:Path,engine:TTSEngine,verbose=False) -> None:
-        super().__init__(work_path,verbose)
+    def __init__(self,work_path:Path,engine:TTSEngine,verbose=False,force=False) -> None:
+        super().__init__(work_path,verbose,force)
         self.engine=engine
         
     def get_texts_cache(self)->dict[int,str]:
@@ -34,7 +34,7 @@ class AudioConverter(Converter):
         pbar = tqdm.tqdm(enumerate(texts.items()),total=len(texts))
         pbar.set_description("Generating slide audios")
         for _,(i,text) in pbar:
-            audio_path = self.work_path/f'frame_{i}.mp3'
+            audio_path = self.work_path/f'frame_{i:03}.mp3'
             paths.append(audio_path)
             if changed_texts[i] or not audio_path.exists():
                 self.engine.generate(text,audio_path)

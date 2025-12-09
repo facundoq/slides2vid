@@ -41,14 +41,20 @@ class FFMPEGVideoSlideGenerator(SlideGenerator):
         
         
     def concatenate(self, video_files: list[Path], out_path: Path) -> None:
-        loglevel = "quiet" if self.verbose else "error"
+        loglevel = "warning" if self.verbose else "quiet"
         filelist = self.work_folder/'filelist'
-        with open(filelist, 'w') as f:
-            for video_file in video_files:
-                f.write(f'file {video_file.absolute()}\n')
-        (
-            ffmpeg
-            .input(filelist, format='concat', safe=0)
-            .output(str(out_path), c='copy',loglevel=loglevel)
-            .run(overwrite_output=True)
-        )
+        try:
+            with open(filelist, 'w') as f:
+                for video_file in video_files:
+                    f.write(f'file {video_file.absolute()}\n')
+
+            out, err = (
+                ffmpeg
+                .input(filelist, format='concat', safe=0)
+                .output(str(out_path), c='copy',loglevel=loglevel)
+                .run(overwrite_output=True)
+            )
+            if err is not None:
+                raise tool.ToolError(err.decode('utf-8'))
+        except ffmpeg.Error as e:
+            print(e.stderr,e.stdout)
